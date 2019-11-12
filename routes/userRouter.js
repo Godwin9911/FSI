@@ -52,6 +52,21 @@ function routes(User) {
       return res.status(404).json({ message: 'not logged In' });
     });
 
+  // send the project_id and user_id
+  userRouter.route('/saveProject')
+    .post((req, res) => {
+      User.updateOne({ _id: req.body.id }, { $push: { project_id: req.body.project_id } })
+        .then((data) => res.status(200).json(data))
+        .catch((err) => console.log(err));
+    });
+
+  userRouter.route('/deleteSaved')
+    .delete((req, res) => {
+      User.updateOne({ _id: req.body.id }, { $pull: { project_id: req.body.project_id } })
+        .then((data) => res.status(200).json(data))
+        .catch((err) => console.log(err));
+    });
+
   return userRouter;
 }
 

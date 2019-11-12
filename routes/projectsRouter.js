@@ -2,7 +2,7 @@
 /* eslint-disable radix */
 const express = require('express');
 const uuid = require('uuid');
-// const MessagingResponse = require('twilio').twiml.MessagingResponse;
+const {MessagingResponse} = require('twilio').twiml;
 const multerConfig = require('../config/multer');
 
 const projects = [
@@ -18,24 +18,24 @@ const projects = [
     start_date: '10/11/2019',
     amount_approved_in_2016: '200000',
     amount_approved_in_2017: '400000',
-    likes: [ 
-      '5dc95cc745633f3e7862f947', 
-      '5dc95cc745633f3e7862f947', 
-      '5dc95cc74jfjnjf7862f947', 
-      '5dc95cc74jfjnjf7862f947', 
-      '5dc95cc74jfjnjf7862f947', 
-      '5dc95cc74jfjnjf7862f947', 
+    likes: [
+      '5dc95cc745633f3e7862f947',
+      '5dc95cc745633f3e7862f947',
+      '5dc95cc74jfjnjf7862f947',
+      '5dc95cc74jfjnjf7862f947',
+      '5dc95cc74jfjnjf7862f947',
+      '5dc95cc74jfjnjf7862f947',
       '5dc95cc74jfjnjf7862f947'
     ],
-    dislikes: [ 
-      '5dc95cc74jfjnjf7862f947', 
+    dislikes: [
+      '5dc95cc74jfjnjf7862f947',
       '5dc95cc74jfjnjf7862f947'
     ],
-    comments: [ 
+    comments: [
       {
         commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
         comment: 'The Project was awesome'
-      }, 
+      },
       {
         commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
         comment: 'An awesome completed project'
@@ -211,11 +211,11 @@ function routes(Project) {
   projectsRouter.route('/:id')
     .get((req, res) => {
       if (!req.params.id) {
-        res.status(400).json({ message: 'missing Credentials' })
+        res.status(400).json({ message: 'missing Credentials' });
       }
-      Project.findById(req.params.id, (err, project) => {
+      Project.findOne({ project_id: req.params.id }, (err, project) => {
         if (err) return res.send(err);
-        return res.status(200).json(project)
+        return res.status(200).json(project);
       }).catch((err) => console.log(err));
     });
 
@@ -272,9 +272,7 @@ function routes(Project) {
   // POST projects/addCommentImage
   // body - imageToUpload
   projectsRouter.route('/uploadCommentImage')
-    .post(multerConfig.saveToUploads, (req, res) => {
-      return res.status(200).json('file uploaded successfully');
-    });
+    .post(multerConfig.saveToUploads, (req, res) => res.status(200).json('file uploaded successfully'));
 
   // POST projects/addCommentImage
   // body - report && project_id
@@ -294,28 +292,26 @@ function routes(Project) {
 
   // do when internet works
   projectsRouter.route('/sendSms')
-    .post((req, res) => {
-      /* const twiml = new MessagingResponse();
+    .post( async (req, res) => {
+      const twiml = new MessagingResponse();
       // TODO is split and send report or send comment
-      if (req.body.Body) {
-        twiml.message('Hi!');
-      }
+      const string = req.body.Body.split('-');
+      const id = string[0];
+      const comment = string[1];
+      const insertComments = {
+        commentId: uuid(),
+        comment,
+      };
+
+      // eslint-disable-next-line max-len
+      await Project.updateOne({ project_id: id }, { $push: { comments: { ...insertComments } } })
+        .then((data) => /* res.status(200).json(data) */
+          console.log(data))
+        .catch((err) => console.log(err));
+
+      twiml.message('your comment has been sent!');
       res.writeHead(200, { 'Content-Type': 'text/xml' });
       res.end(twiml.toString());
-      */
-      if (req.body) {
-        const string = req.body.message.split('-');
-        const id = string[0];
-        const comment = string[1];
-        const insertComments = {
-          commentId: uuid(),
-          comment,
-        };
-        // eslint-disable-next-line max-len
-        Project.updateOne({ project_id: id }, { $push: { comments: { ...insertComments } } })
-          .then((data) => res.status(200).json(data))
-          .catch((err) => console.log(err))
-      }
     });
 
 
