@@ -15,7 +15,6 @@ const Project = require('./models/projectModel');
 // DB Config
 const dbs = require('./config/keys').mongoURI;
 
-const commentsRouter = require('./routes/commentsRouter')();
 const userRouter = require('./routes/userRouter')(User);
 const projectsRouter = require('./routes/projectsRouter')(Project);
 
@@ -35,6 +34,7 @@ db.once('open', async () => {
   Promise.all([
     Project.create({
       project_id: '1',
+      project_title: 'Construction of Hospital',
       name_of_contractor: 'Mike Oliver',
       cartegory: 'Health',
       activity_status: 'completed',
@@ -77,6 +77,7 @@ db.once('open', async () => {
     }),
     Project.create({
       project_id: '2',
+      project_title: 'Construction of School',
       name_of_contractor: 'Jack Ryan',
       cartegory: 'Education',
       activity_status: 'Abandoned',
@@ -119,6 +120,7 @@ db.once('open', async () => {
     }),
     Project.create({
       project_id: '3',
+      project_title: 'Construction of Hospital',
       name_of_contractor: 'John Gillingham',
       cartegory: 'Health',
       activity_status: 'completed',
@@ -161,6 +163,7 @@ db.once('open', async () => {
     }),
     Project.create({
       project_id: '4',
+      project_title: 'Road Construction',
       name_of_contractor: 'John Gillingham',
       cartegory: 'Health',
       activity_status: 'in Progress',
@@ -203,6 +206,7 @@ db.once('open', async () => {
     }),
     Project.create({
       project_id: '5',
+      project_title: 'Road Construction',
       name_of_contractor: 'John Gillingham',
       cartegory: 'Health',
       activity_status: 'completed',
@@ -245,6 +249,7 @@ db.once('open', async () => {
     }),
     Project.create({
       project_id: '6',
+      project_title: 'Road Construction',
       name_of_contractor: 'John Gillingham',
       cartegory: 'Health',
       activity_status: 'completed',
@@ -287,6 +292,7 @@ db.once('open', async () => {
     }),
     Project.create({
       project_id: '7',
+      project_title: 'Road Construction',
       name_of_contractor: 'John Gillingham',
       cartegory: 'Health',
       activity_status: 'completed',
@@ -329,6 +335,7 @@ db.once('open', async () => {
     }),
     Project.create({
       project_id: '8',
+      project_title: 'Road Construction',
       name_of_contractor: 'John Gillingham',
       cartegory: 'Health',
       activity_status: 'completed',
@@ -371,6 +378,7 @@ db.once('open', async () => {
     }),
     Project.create({
       project_id: '9',
+      project_title: 'Road Construction',
       name_of_contractor: 'John Gillingham',
       cartegory: 'Health',
       activity_status: 'completed',
@@ -413,6 +421,7 @@ db.once('open', async () => {
     }),
     Project.create({
       project_id: '10',
+      project_title: 'Highway construction',
       name_of_contractor: 'Mike Dean',
       cartegory: 'Health',
       activity_status: 'completed',
@@ -479,7 +488,6 @@ app.use(flash());
 
 app.use('/api/user', userRouter);
 app.use('/api/projects', projectsRouter);
-app.use('/api/comments', commentsRouter);
 
 app.get('/', (req, res) => {
   res.send('Welcome to my API');

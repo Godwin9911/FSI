@@ -210,9 +210,12 @@ function routes(Project) {
 
   projectsRouter.route('/:id')
     .get((req, res) => {
-      Project.findById(req.params.id, (err, projects) => {
+      if (!req.params.id) {
+        res.status(400).json({ message: 'missing Credentials' })
+      }
+      Project.findById(req.params.id, (err, project) => {
         if (err) return res.send(err);
-        return res.status(200).json(projects)
+        return res.status(200).json(project)
       }).catch((err) => console.log(err));
     });
 

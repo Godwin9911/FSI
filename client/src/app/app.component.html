@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" [routerLink]="['/welcome']">{{ title | uppercase}}</a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarColor01"
+    aria-controls="navbarColor01"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor01">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/welcome']"><i class="fa fa-home"></i> Home</a>
+      </li>
+      <li
+        class="nav-item"
+        routerLinkActive="active"
+      >
+        <a class="nav-link" [routerLink]="['/questions']">Questions</a>
+      </li>
+      <li
+        class="nav-item"
+        *ngIf="isLoggedIn"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <a class="nav-link" [routerLink]="['/postquestions']">Post Questions</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item"
+        *ngIf="isLoggedIn">
+        <a class="nav-link"><i class="fa fa-user"></i> {{ firstname }}'s Profile</a>
+      </li>
+      <li class="nav-item"
+        *ngIf="!isLoggedIn">
+        <a class="nav-link"
+        [routerLink]="['/login']">Log In</a>
+      </li>
+      <li class="nav-item"
+        *ngIf="isLoggedIn">
+        <a class="nav-link"
+           (click)="logOut()">Log Out</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container mt-3">
+  <router-outlet></router-outlet>
+</div>
