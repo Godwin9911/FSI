@@ -8,8 +8,11 @@ const flash = require('connect-flash');
 const app = express();
 const port = process.env.PORT || 5000;
 const User = require('./models/userModel');
+const Project = require('./models/projectModel');
+
+const commentsRouter = require('./routes/commentsRouter')();
 const userRouter = require('./routes/userRouter')(User);
-const projectsRouter = require('./routes/projectsRouter')();
+const projectsRouter = require('./routes/projectsRouter')(/* Project */);
 
 
 // passport Config
@@ -21,6 +24,11 @@ mongoose.connect('mongodb://localhost/nddc', { useNewUrlParser: true, useUnified
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 // Express Session
 app.use(session({
@@ -37,6 +45,7 @@ app.use(flash());
 
 app.use('/api/user', userRouter);
 app.use('/api/projects', projectsRouter);
+app.use('/api/comments', commentsRouter);
 
 app.get('/', (req, res) => {
   res.send('Welcome to my API');

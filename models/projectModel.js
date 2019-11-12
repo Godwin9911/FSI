@@ -12,4 +12,9 @@ const projectModel = new mongoose.Schema({
   start_date: { type: String },
   amount_approved_in_2016: { type: String },
   amount_approved_in_2017: { type: String },
-})
+  likes: { type: Object },
+  dislikes: { type: Object },
+  comments: { type: Object }
+});
+
+module.exports = mongoose.model('Project', projectModel);
