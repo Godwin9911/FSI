@@ -18,9 +18,10 @@ const projectsRouter = require('./routes/projectsRouter')(/* Project */);
 // passport Config
 require('./config/passport')(passport);
 
-mongoose.connect('mongodb://localhost/nddc', { useNewUrlParser: true, useUnifiedTopology: true })
+/*mongoose.connect('mongodb://localhost/nddc', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB Connected..'))
   .catch((err) => console.log(err));
+*/
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
