@@ -1,27 +1,460 @@
+/* eslint-disable no-console */
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const session = require('express-session');
 const flash = require('connect-flash');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 5000;
 const User = require('./models/userModel');
 const Project = require('./models/projectModel');
+// DB Config
+const dbs = require('./config/keys').mongoURI;
 
 const commentsRouter = require('./routes/commentsRouter')();
 const userRouter = require('./routes/userRouter')(User);
-const projectsRouter = require('./routes/projectsRouter')(/* Project */);
+const projectsRouter = require('./routes/projectsRouter')(Project);
 
-
+app.use(cors());
 // passport Config
 require('./config/passport')(passport);
 
-/*mongoose.connect('mongodb://localhost/nddc', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(dbs, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB Connected..'))
   .catch((err) => console.log(err));
-*/
+
+// fill Database
+const db = mongoose.connection;
+db.once('open', async () => {
+  if (await Project.countDocuments().exec() > 0) return;
+
+  Promise.all([
+    Project.create({
+      project_id: '1',
+      name_of_contractor: 'Mike Oliver',
+      cartegory: 'Health',
+      activity_status: 'completed',
+      lga: 'Obio Akpor',
+      community: 'Ikwere',
+      state: 'Rivers',
+      project_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum dapibus ullamcorper. Etiam interdum luctus ex. Proin ut metus odio. Nulla hendrerit aliquam mauris, at scelerisque velit dignissim id.',
+      start_date: '10/11/2017',
+      amount_approved_in_2016: '230000',
+      amount_approved_in_2017: '800000',
+      likes: [
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      dislikes: [
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      comments: [
+        {
+          commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
+          comment: 'The Project was awesome'
+        },
+        {
+          commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
+          comment: 'An awesome completed project'
+        }
+      ],
+      reports: [
+        {
+          reportId: '31b0c8df-6c89-4daa-ad8e-b9b357981cf5',
+          report: 'This is a test Report'
+        }
+      ]
+    }),
+    Project.create({
+      project_id: '2',
+      name_of_contractor: 'Jack Ryan',
+      cartegory: 'Education',
+      activity_status: 'Abandoned',
+      lga: 'Obio Akpor',
+      community: 'Calabar',
+      state: 'Crossriver',
+      project_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum dapibus ullamcorper. Etiam interdum luctus ex. Proin ut metus odio. Nulla hendrerit aliquam mauris, at scelerisque velit dignissim id.',
+      start_date: '10/11/2015',
+      amount_approved_in_2016: '300000',
+      amount_approved_in_2017: '700000',
+      likes: [
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      dislikes: [
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      comments: [
+        {
+          commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
+          comment: 'The Project was awesome'
+        },
+        {
+          commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
+          comment: 'An awesome completed project'
+        }
+      ],
+      reports: [
+        {
+          reportId: '31b0c8df-6c89-4daa-ad8e-b9b357981cf5',
+          report: 'This is a test Report'
+        }
+      ]
+    }),
+    Project.create({
+      project_id: '3',
+      name_of_contractor: 'John Gillingham',
+      cartegory: 'Health',
+      activity_status: 'completed',
+      lga: 'Obio Akpor',
+      community: 'Calabar',
+      state: 'Crossriver',
+      project_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum dapibus ullamcorper. Etiam interdum luctus ex. Proin ut metus odio. Nulla hendrerit aliquam mauris, at scelerisque velit dignissim id.',
+      start_date: '10/11/2018',
+      amount_approved_in_2016: '800000',
+      amount_approved_in_2017: '900000',
+      likes: [
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      dislikes: [
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      comments: [
+        {
+          commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
+          comment: 'The Project was awesome'
+        },
+        {
+          commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
+          comment: 'An awesome completed project'
+        }
+      ],
+      reports: [
+        {
+          reportId: '31b0c8df-6c89-4daa-ad8e-b9b357981cf5',
+          report: 'This is a test Report'
+        }
+      ]
+    }),
+    Project.create({
+      project_id: '4',
+      name_of_contractor: 'John Gillingham',
+      cartegory: 'Health',
+      activity_status: 'in Progress',
+      lga: 'Obio Akpor',
+      community: 'Calabar',
+      state: 'Abuloma',
+      project_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum dapibus ullamcorper. Etiam interdum luctus ex. Proin ut metus odio. Nulla hendrerit aliquam mauris, at scelerisque velit dignissim id.',
+      start_date: '10/11/2018',
+      amount_approved_in_2016: '800000',
+      amount_approved_in_2017: '900000',
+      likes: [
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      dislikes: [
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      comments: [
+        {
+          commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
+          comment: 'The Project was awesome'
+        },
+        {
+          commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
+          comment: 'An awesome completed project'
+        }
+      ],
+      reports: [
+        {
+          reportId: '31b0c8df-6c89-4daa-ad8e-b9b357981cf5',
+          report: 'This is a test Report'
+        }
+      ]
+    }),
+    Project.create({
+      project_id: '5',
+      name_of_contractor: 'John Gillingham',
+      cartegory: 'Health',
+      activity_status: 'completed',
+      lga: 'Obio Akpor',
+      community: 'Calabar',
+      state: 'Crossriver',
+      project_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum dapibus ullamcorper. Etiam interdum luctus ex. Proin ut metus odio. Nulla hendrerit aliquam mauris, at scelerisque velit dignissim id.',
+      start_date: '10/11/2018',
+      amount_approved_in_2016: '800000',
+      amount_approved_in_2017: '900000',
+      likes: [
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      dislikes: [
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      comments: [
+        {
+          commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
+          comment: 'The Project was awesome'
+        },
+        {
+          commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
+          comment: 'An awesome completed project'
+        }
+      ],
+      reports: [
+        {
+          reportId: '31b0c8df-6c89-4daa-ad8e-b9b357981cf5',
+          report: 'This is a test Report'
+        }
+      ]
+    }),
+    Project.create({
+      project_id: '6',
+      name_of_contractor: 'John Gillingham',
+      cartegory: 'Health',
+      activity_status: 'completed',
+      lga: 'Obio Akpor',
+      community: 'Calabar',
+      state: 'Crossriver',
+      project_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum dapibus ullamcorper. Etiam interdum luctus ex. Proin ut metus odio. Nulla hendrerit aliquam mauris, at scelerisque velit dignissim id.',
+      start_date: '10/11/2018',
+      amount_approved_in_2016: '800000',
+      amount_approved_in_2017: '900000',
+      likes: [
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      dislikes: [
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      comments: [
+        {
+          commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
+          comment: 'The Project was awesome'
+        },
+        {
+          commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
+          comment: 'An awesome completed project'
+        }
+      ],
+      reports: [
+        {
+          reportId: '31b0c8df-6c89-4daa-ad8e-b9b357981cf5',
+          report: 'This is a test Report'
+        }
+      ]
+    }),
+    Project.create({
+      project_id: '7',
+      name_of_contractor: 'John Gillingham',
+      cartegory: 'Health',
+      activity_status: 'completed',
+      lga: 'Obio Akpor',
+      community: 'Calabar',
+      state: 'Crossriver',
+      project_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum dapibus ullamcorper. Etiam interdum luctus ex. Proin ut metus odio. Nulla hendrerit aliquam mauris, at scelerisque velit dignissim id.',
+      start_date: '10/11/2018',
+      amount_approved_in_2016: '800000',
+      amount_approved_in_2017: '900000',
+      likes: [
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      dislikes: [
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      comments: [
+        {
+          commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
+          comment: 'The Project was awesome'
+        },
+        {
+          commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
+          comment: 'An awesome completed project'
+        }
+      ],
+      reports: [
+        {
+          reportId: '31b0c8df-6c89-4daa-ad8e-b9b357981cf5',
+          report: 'This is a test Report'
+        }
+      ]
+    }),
+    Project.create({
+      project_id: '8',
+      name_of_contractor: 'John Gillingham',
+      cartegory: 'Health',
+      activity_status: 'completed',
+      lga: 'Obio Akpor',
+      community: 'Calabar',
+      state: 'Crossriver',
+      project_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum dapibus ullamcorper. Etiam interdum luctus ex. Proin ut metus odio. Nulla hendrerit aliquam mauris, at scelerisque velit dignissim id.',
+      start_date: '10/11/2018',
+      amount_approved_in_2016: '800000',
+      amount_approved_in_2017: '900000',
+      likes: [
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      dislikes: [
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      comments: [
+        {
+          commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
+          comment: 'The Project was awesome'
+        },
+        {
+          commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
+          comment: 'An awesome completed project'
+        }
+      ],
+      reports: [
+        {
+          reportId: '31b0c8df-6c89-4daa-ad8e-b9b357981cf5',
+          report: 'This is a test Report'
+        }
+      ]
+    }),
+    Project.create({
+      project_id: '9',
+      name_of_contractor: 'John Gillingham',
+      cartegory: 'Health',
+      activity_status: 'completed',
+      lga: 'Obio Akpor',
+      community: 'Calabar',
+      state: 'Crossriver',
+      project_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum dapibus ullamcorper. Etiam interdum luctus ex. Proin ut metus odio. Nulla hendrerit aliquam mauris, at scelerisque velit dignissim id.',
+      start_date: '10/11/2018',
+      amount_approved_in_2016: '800000',
+      amount_approved_in_2017: '900000',
+      likes: [
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      dislikes: [
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      comments: [
+        {
+          commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
+          comment: 'The Project was awesome'
+        },
+        {
+          commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
+          comment: 'An awesome completed project'
+        }
+      ],
+      reports: [
+        {
+          reportId: '31b0c8df-6c89-4daa-ad8e-b9b357981cf5',
+          report: 'This is a test Report'
+        }
+      ]
+    }),
+    Project.create({
+      project_id: '10',
+      name_of_contractor: 'Mike Dean',
+      cartegory: 'Health',
+      activity_status: 'completed',
+      lga: 'Obio Akpor',
+      community: 'Calabar',
+      state: 'Crossriver',
+      project_description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum dapibus ullamcorper. Etiam interdum luctus ex. Proin ut metus odio. Nulla hendrerit aliquam mauris, at scelerisque velit dignissim id.',
+      start_date: '10/11/2015',
+      amount_approved_in_2016: '800000',
+      amount_approved_in_2017: '900000',
+      likes: [
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc745633f3e7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      dislikes: [
+        '5dc95cc74jfjnjf7862f947',
+        '5dc95cc74jfjnjf7862f947'
+      ],
+      comments: [
+        {
+          commentId: 'fbeac5af-6619-4f65-9528-3d492011dd4a',
+          comment: 'The Project was awesome'
+        },
+        {
+          commentId: 'ac85eb63-7611-486c-bdc1-40fa31f85046',
+          comment: 'An awesome completed project'
+        }
+      ],
+      reports: [
+        {
+          reportId: '31b0c8df-6c89-4daa-ad8e-b9b357981cf5',
+          report: 'This is a test Report'
+        }
+      ]
+    }),
+  ]).then(() => console.log('Added new Projects'));
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -55,4 +488,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Running on port  ${port}`);
 });
-

@@ -2,7 +2,8 @@
 /* eslint-disable radix */
 const express = require('express');
 const uuid = require('uuid');
-const MessagingResponse = require('twilio').twiml.MessagingResponse;
+// const MessagingResponse = require('twilio').twiml.MessagingResponse;
+const multerConfig = require('../config/multer');
 
 const projects = [
   {
@@ -40,8 +41,7 @@ const projects = [
         comment: 'An awesome completed project'
       }
     ]
-  }
-  ,
+  },
   {
     project_id: '2',
     name_of_contractor: 'Ann Oliver',
@@ -163,7 +163,7 @@ const projects = [
 ];
 
 function paginatedResults(model) {
-  return /* async */ (req, res, next) => {
+  return async (req, res, next) => {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
 
@@ -172,7 +172,7 @@ function paginatedResults(model) {
 
     const results = {};
 
-    if (endIndex < /* await model.countDocuments().exec() */ model.length) {
+    if (endIndex < await model.countDocuments().exec() /* model.length */) {
       results.next = {
         page: page + 1,
         limit
@@ -186,29 +186,37 @@ function paginatedResults(model) {
       };
     }
 
-    results.results = model.slice(startIndex, endIndex);
+    /* results.results = model.slice(startIndex, endIndex);
     res.paginatedResults = results;
     next();
+    */
 
-    /* try {
-      results.results = await model.find(search).limit(limit).skip(startIndex).exec();
+    try {
+      results.results = await model.find().limit(limit).skip(startIndex).exec();
       res.paginatedResults = results;
       next();
     } catch (e) {
       res.status(500).json({ message: e.message });
     }
-    */
   };
 }
 
-function routes() {
+function routes(Project) {
   const projectsRouter = express.Router();
   projectsRouter.route('/')
-    .get(paginatedResults(projects), (req, res) => {
+    .get(paginatedResults(Project), (req, res) => {
       res.json(res.paginatedResults);
     });
 
-  /* projectsRouter.route('/search')
+  projectsRouter.route('/:id')
+    .get((req, res) => {
+      Project.findById(req.params.id, (err, projects) => {
+        if (err) return res.send(err);
+        return res.status(200).json(projects)
+      }).catch((err) => console.log(err));
+    });
+
+  projectsRouter.route('/search')
     .get((req, res) => {
       // const query = {};
       // console.log(req.query);
@@ -221,6 +229,9 @@ function routes() {
       });
     });
 
+
+  // POST projects/likeProject
+  // body - project_id && userId
   projectsRouter.route('/likeProject')
     .post((req, res) => {
       const { userId } = req.body;
@@ -229,6 +240,8 @@ function routes() {
         .catch((err) => console.log(err));
     });
 
+  // POST projects/dislikeProject
+  // body - project_id && userId
   projectsRouter.route('/dislikeProject')
     .post((req, res) => {
       const { userId } = req.body;
@@ -237,6 +250,8 @@ function routes() {
         .catch((err) => console.log(err));
     });
 
+  // POST projects/addComment
+  // body - project_id && comment
   projectsRouter.route('/addComment')
     .post((req, res) => {
       const { comment } = req.body;
@@ -251,19 +266,54 @@ function routes() {
         .catch((err) => console.log(err));
     });
 
-  projectsRouter.route('./sendSms')
-    .post((req, res) => { 
-      const twiml = new MessagingResponse();
+  // POST projects/addCommentImage
+  // body - imageToUpload
+  projectsRouter.route('/uploadCommentImage')
+    .post(multerConfig.saveToUploads, (req, res) => {
+      return res.status(200).json('file uploaded successfully');
+    });
+
+  // POST projects/addCommentImage
+  // body - report && project_id
+  projectsRouter.route('/report')
+    .post((req, res) => {
+      const { report } = req.body;
+      const insertReport = {
+        reportId: uuid(),
+        report,
+      };
+
+      // eslint-disable-next-line max-len
+      Project.updateOne({ project_id: req.body.project_id }, { $push: { reports: { ...insertReport } } })
+        .then((data) => res.status(200).json(data))
+        .catch((err) => console.log(err));
+    });
+
+  // do when internet works
+  projectsRouter.route('/sendSms')
+    .post((req, res) => {
+      /* const twiml = new MessagingResponse();
       // TODO is split and send report or send comment
       if (req.body.Body) {
         twiml.message('Hi!');
       }
-
       res.writeHead(200, { 'Content-Type': 'text/xml' });
       res.end(twiml.toString());
+      */
+      if (req.body) {
+        const string = req.body.message.split('-');
+        const id = string[0];
+        const comment = string[1];
+        const insertComments = {
+          commentId: uuid(),
+          comment,
+        };
+        // eslint-disable-next-line max-len
+        Project.updateOne({ project_id: id }, { $push: { comments: { ...insertComments } } })
+          .then((data) => res.status(200).json(data))
+          .catch((err) => console.log(err))
+      }
     });
-
-    */
 
 
   return projectsRouter;
