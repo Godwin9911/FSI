@@ -263,7 +263,7 @@ function routes(Project) {
         comment,
       };
 
-      // eslint-disable-next-line max-len
+      // eslint-disable-{next-line max-len
       Project.updateOne({ project_id: req.body.project_id }, { $push: { comments: { ...insertComments } } })
         .then((data) => res.status(200).json(data))
         .catch((err) => console.log(err));
