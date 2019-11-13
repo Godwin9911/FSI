@@ -72,14 +72,14 @@ function routes(User) {
   userRouter.route('/saveProject')
     .post((req, res) => {
       // res.send(req.body);
-      User.updateOne({ _id: req.body.id }, { $push: { saved_projects: req.body.project_id } })
+      User.updateOne({ _id: req.body.user_id }, { $push: { saved_projects: req.body.project_id } })
         .then((data) => res.status(200).json(data))
         .catch((err) => console.log(err));
     });
 
   userRouter.route('/deleteSaved')
     .delete((req, res) => {
-      User.updateOne({ _id: req.body.id }, { $pull: { saved_projects: req.body.project_id } })
+      User.updateOne({ _id: req.body.user_id }, { $pull: { saved_projects: req.body.project_id } })
         .then((data) => res.status(200).json(data))
         .catch((err) => console.log(err));
     });

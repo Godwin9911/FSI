@@ -32,27 +32,27 @@ GET http://localhost:5000/api/projects/:id
 The users must be logged in !!.  
 GET http://localhost:5000/api/user/getSavedProject
 
-#### Post a project
+#### Save a project
 body contents 
-- userid
-- projectid
+- user_id
+- project_id
 POST http://localhost:5000/api/user/saveProject
 
 #### Delete a saved project
 body contents 
-- userid
-- projectid  
+- user_id
+- project_id  
 DELETE http://localhost:5000/api/user/deleteSaved
 
 #### Like a Project
 body contents 
-- userid
+- user_id
 - projectid  
 POST http://localhost:5000/api/projects/dislikeProject
 
 #### Dislike a Project
 body contents 
-- userid
+- user_id
 - project_id  
 POST http://localhost:5000/api/projects/likeProject
 

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-console */
 /* eslint-disable radix */
 const express = require('express');
@@ -77,21 +78,21 @@ function routes(Project) {
 
 
   // POST projects/likeProject
-  // body - project_id && userId
+  // body - project_id && user_id
   projectsRouter.route('/likeProject')
     .post((req, res) => {
-      const { userId } = req.body;
-      Project.updateOne({ project_id: req.body.project_id }, { $push: { likes: userId } })
+      const { user_id } = req.body;
+      Project.updateOne({ project_id: req.body.project_id }, { $push: { likes: user_id } })
         .then((data) => res.status(200).json(data))
         .catch((err) => console.log(err));
     });
 
   // POST projects/dislikeProject
-  // body - project_id && userId
+  // body - project_id && user_id
   projectsRouter.route('/dislikeProject')
     .post((req, res) => {
-      const { userId } = req.body;
-      Project.updateOne({ project_id: req.body.project_id }, { $push: { dislikes: userId } })
+      const { user_id } = req.body;
+      Project.updateOne({ project_id: req.body.project_id }, { $push: { dislikes: user_id } })
         .then((data) => res.status(200).json(data))
         .catch((err) => console.log(err));
     });
