@@ -35,7 +35,7 @@ GET http://localhost:5000/api/user/getSavedProject
 #### Save a project
 body contents 
 - user_id
-- project_id
+- project_id  
 POST http://localhost:5000/api/user/saveProject
 
 #### Delete a saved project
@@ -67,5 +67,5 @@ POST http://localhost:5000/api/projects/addComment
 #### Report a project
 body contents 
 - project_id  
-- report 
+- report  
 POST http://localhost:5000/api/projects/report
