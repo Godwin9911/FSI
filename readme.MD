@@ -69,3 +69,6 @@ body contents
 - project_id  
 - report  
 POST http://localhost:5000/api/projects/report
+
+## Screenshot
+<img src="./screenshots/sdn.png" alt="api screenshot">
