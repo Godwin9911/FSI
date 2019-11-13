@@ -38,19 +38,19 @@ body contents
 - projectid
 POST http://localhost:5000/api/user/saveProject
 
-#### delete a saved project
+#### Delete a saved project
 body contents 
 - userid
 - projectid  
 DELETE http://localhost:5000/api/user/deleteSaved
 
-#### like a Project
+#### Like a Project
 body contents 
 - userid
 - projectid  
 POST http://localhost:5000/api/projects/dislikeProject
 
-#### dislike a Project
+#### Dislike a Project
 body contents 
 - userid
 - project_id  
