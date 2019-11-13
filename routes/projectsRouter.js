@@ -51,7 +51,6 @@ function routes(Project) {
       res.json(res.paginatedResults);
     });
 
-  
   projectsRouter.route('/:id')
     .get((req, res) => {
       if (!req.params.id) {

@@ -1,1 +1,2 @@
+// Get Paginated projects
 GET http://localhost:5000/api/projects?page=1&limit=5
