@@ -54,9 +54,16 @@ function routes(Project) {
 
   projectsRouter.route('/search')
     .get((req, res) => {
+      let finalquery;
       // const query = {};
       // res.json(req.query);
-      Project.find(req.query, (err, searchResult) => {
+      if (req.query.year) {
+        finalquery = { year: req.query.year };
+      } else {
+        finalquery = req.query;
+      }
+      console.log(finalquery);
+      Project.find(finalquery, (err, searchResult) => {
         if (err) {
           return res.send(err);
         }
