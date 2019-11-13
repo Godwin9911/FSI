@@ -145,12 +145,13 @@ function routes(Project) {
 
       // eslint-disable-next-line max-len
       await Project.updateOne({ project_id: id }, { $push: { comments: { ...insertComments } } })
-        .then((data) => {
-          twiml.message('your comment has been sent!');
-          res.writeHead(200, { 'Content-Type': 'text/xml' });
-          res.end(twiml.toString());
-        })
+        .then((data) => /* res.status(200).json(data) */
+          console.log(data))
         .catch((err) => console.log(err));
+
+      await twiml.message('your comment has been sent!');
+      res.writeHead(200, { 'Content-Type': 'text/xml' });
+      res.end(twiml.toString());
     });
 
 
