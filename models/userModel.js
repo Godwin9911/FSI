@@ -4,8 +4,8 @@ const userModel = new mongoose.Schema({
   firstname: { type: String },
   lastname: { type: String },
   email: { type: String },
-  bio: { type: String },
-  gender: { type: String },
+  // bio: { type: String },
+  // gender: { type: String },
   password: { type: String },
   saved_projects: { type: Object }
 });
