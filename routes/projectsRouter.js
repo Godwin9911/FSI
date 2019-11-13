@@ -3,7 +3,8 @@
 /* eslint-disable radix */
 const express = require('express');
 const uuid = require('uuid');
-const { MessagingResponse } = require('twilio').twiml;
+// eslint-disable-next-line prefer-destructuring
+const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const multerConfig = require('../config/multer');
 
 function paginatedResults(model) {
