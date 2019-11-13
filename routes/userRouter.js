@@ -3,6 +3,8 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 
+const Project = require('../models/projectModel');
+
 function routes(User) {
   const userRouter = express.Router();
 
@@ -52,17 +54,32 @@ function routes(User) {
       return res.status(404).json({ message: 'not logged In' });
     });
 
+  userRouter.route('/getSavedProject')
+    .get((req, res) => {
+      res.locals.user = req.user || null;
+      Project.find({ project_id: { $in: req.user.saved_projects } })
+        .then((projectData) => {
+          if (!projectData) {
+            return res.status(200).json({ message: 'you have no saved projects' });
+          }
+          return res.status(200).json(projectData);
+        })
+        .catch((err) => res.send(err));
+      // res.json(req.user);
+    });
+
   // send the project_id and user_id
   userRouter.route('/saveProject')
     .post((req, res) => {
-      User.updateOne({ _id: req.body.id }, { $push: { project_id: req.body.project_id } })
+      // res.send(req.body);
+      User.updateOne({ _id: req.body.id }, { $push: { saved_projects: req.body.project_id } })
         .then((data) => res.status(200).json(data))
         .catch((err) => console.log(err));
     });
 
   userRouter.route('/deleteSaved')
     .delete((req, res) => {
-      User.updateOne({ _id: req.body.id }, { $pull: { project_id: req.body.project_id } })
+      User.updateOne({ _id: req.body.id }, { $pull: { saved_projects: req.body.project_id } })
         .then((data) => res.status(200).json(data))
         .catch((err) => console.log(err));
     });

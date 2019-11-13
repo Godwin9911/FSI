@@ -7,7 +7,7 @@ const userModel = new mongoose.Schema({
   bio: { type: String },
   gender: { type: String },
   password: { type: String },
-  savedProjects: { type: Object }
+  saved_projects: { type: Object }
 });
 
 module.exports = mongoose.model('User', userModel);
