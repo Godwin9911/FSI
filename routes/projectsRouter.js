@@ -52,22 +52,10 @@ function routes(Project) {
       res.json(res.paginatedResults);
     });
 
-  projectsRouter.route('/:id')
-    .get((req, res) => {
-      if (!req.params.id) {
-        res.status(400).json({ message: 'missing Credentials' });
-      }
-      Project.findOne({ project_id: req.params.id }, (err, project) => {
-        if (err) return res.send(err);
-        return res.status(200).json(project);
-      }).catch((err) => console.log(err));
-    });
-
   projectsRouter.route('/search')
     .get((req, res) => {
       // const query = {};
-      // console.log(req.query);
-
+      // res.json(req.query);
       Project.find(req.query, (err, searchResult) => {
         if (err) {
           return res.send(err);
@@ -156,6 +144,18 @@ function routes(Project) {
       twiml.message('your comment has been sent!');
       res.writeHead(200, { 'Content-Type': 'text/xml' });
       res.end(twiml.toString());
+    });
+
+
+  projectsRouter.route('/:id')
+    .get((req, res) => {
+      if (!req.params.id) {
+        res.status(400).json({ message: 'missing Credentials' });
+      }
+      Project.findOne({ project_id: req.params.id }, (err, project) => {
+        if (err) return res.send(err);
+        return res.status(200).json(project);
+      }).catch((err) => console.log(err));
     });
 
 
