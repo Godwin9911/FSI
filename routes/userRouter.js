@@ -56,8 +56,9 @@ function routes(User) {
 
   userRouter.route('/getSavedProject')
     .get((req, res) => {
-      res.locals.user = req.user || null;
-      Project.find({ project_id: { $in: req.user.saved_projects } })
+      // res.locals.user = req.user || null;
+      // Project.find({ project_id: { $in: req.user.saved_projects } })
+      Project.find({ project_id: { $in: [4, 6, 2,] } })
         .then((projectData) => {
           if (!projectData) {
             return res.status(200).json({ message: 'you have no saved projects' });
