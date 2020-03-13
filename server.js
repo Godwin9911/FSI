@@ -9,15 +9,15 @@ const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 5000;
-const User = require('./models/userModel');
 // DB Config
 const dbs = require('./config/keys').mongoURI;
 
-const userRouter = require('./routes/userRouter')(User);
+const userRouter = require('./routes/userRouter');
+const emailLoginRouter = require('./routes/Auth/emailLoginRouter');
+const googleLoginRouter = require('./routes/Auth/googleLoginRouter');
+const githubLoginRouter = require('./routes/Auth/githubLoginRouter');
 
 app.use(cors());
-// passport Config
-require('./config/passport')(passport);
 
 mongoose.connect(dbs, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB Connected..'))
@@ -41,14 +41,24 @@ app.use(session({
 // passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
+// passport Config
+require('./config/passport')(passport);
 
 app.use(flash());
 
 app.use('/api/user', userRouter);
+app.use('/api/auth/email', emailLoginRouter);
+app.use('/api/auth/google', googleLoginRouter);
+app.use('/api/auth/github', githubLoginRouter);
 
 app.get('/', (req, res) => {
-  res.send('Welcome to my API');
+  res.send('<a href="/api/user/logout">logout<a><br><a href="/api/auth/google">Click me to log in using Google</a> <br> <a href="/api/auth/github">Click me to log in using Github</a>');
 });
+
+app.get('/profile', passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    res.send(req.user);
+  });
 
 app.listen(port, () => {
   console.log(`Running on port  ${port}`);

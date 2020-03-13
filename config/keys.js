@@ -1,8 +1,10 @@
-/* eslint-disable prefer-template */
-// dbPassword = `mongodb+srv://${process.env.YOUR_USERNAME_HERE}:${encodeURIComponent(process.env.YOUR_PASSWORD_HERE)}${process.env.CLUSTER_NAME_HERE}.mongodb.net/test?retryWrites=true`;
+const dotenv = require('dotenv');
 
-module.exports = {
-  // mongoURI: 'mongodb://localhost:27017/nddc'
-  mongoURI: 'mongodb+srv://agedah99:pyLWuYzqEBMSJeSZ@cluster0-i3pvu.mongodb.net/test?retryWrites=true&w=majority'
-  // mongoURI: 'mongodb+srv://agedah99:'+ encodeURIComponent('thankulord99') + '@jokes-push-notification-i3pvu.mongodb.net/test?retryWrites=true'
-};
+dotenv.config();
+
+if (process.env.NODE_ENV === 'development') {
+  module.exports = {
+    PORT: process.env.PORT,
+    mongoURI: process.env.MONGO_URI,
+  };
+}
